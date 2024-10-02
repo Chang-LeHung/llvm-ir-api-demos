@@ -98,7 +98,11 @@ int main() {
 
    auto &theJIT = *jit;
 
-   llvm::orc::ThreadSafeModule TSM(std::move(module), std::make_unique<LLVMContext>());
+   // 使用 ThreadSafeContext 包装 LLVMContext
+   auto TSCtx = std::make_unique<llvm::orc::ThreadSafeContext>(std::make_unique<LLVMContext>());
+
+   // 将模块和线程安全上下文传递给 ThreadSafeModule
+   llvm::orc::ThreadSafeModule TSM(std::move(module), std::move(TSCtx));
    if (auto err = theJIT->addIRModule(std::move(TSM))) {
       errs() << "Failed to add module: " << toString(std::move(err)) << "\n";
       return 1;
