@@ -102,7 +102,7 @@ int main() {
    auto TSCtx = std::make_unique<llvm::orc::ThreadSafeContext>(std::make_unique<LLVMContext>());
 
    // 将模块和线程安全上下文传递给 ThreadSafeModule
-   llvm::orc::ThreadSafeModule TSM(std::move(module), std::move(TSCtx));
+   llvm::orc::ThreadSafeModule TSM(std::move(module), TSCtx);
    if (auto err = theJIT->addIRModule(std::move(TSM))) {
       errs() << "Failed to add module: " << toString(std::move(err)) << "\n";
       return 1;
@@ -123,5 +123,6 @@ int main() {
    int result = fibPtr(input);
    outs() << "fib(" << input << ") = " << result << "\n";
 
+   module->print(outs(), nullptr);
    return 0;
 }

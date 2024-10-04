@@ -1,4 +1,3 @@
-#include <iostream>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
@@ -67,7 +66,9 @@ int main() {
       errs() << "Failed to create LLJIT: " << toString(jit.takeError()) << "\n";
       return 1;
    }
+   module->print(outs(), nullptr);
 
+   (*module).print(outs(), nullptr);
    auto &theJIT = *jit;
 
    llvm::orc::ThreadSafeModule TSM(std::move(module), *TSCtx);
@@ -81,7 +82,6 @@ int main() {
       errs() << "Function not found: " << toString(sym.takeError()) << "\n";
       return 1;
    }
-   // 获取函数指针
    auto addPtr = sym->toPtr<int(int, int)>();
 
    // 调用 add 函数
@@ -89,6 +89,5 @@ int main() {
    int bInput = 7;
    int result = addPtr(aInput, bInput);
    outs() << "add(" << aInput << ", " << bInput << ") = " << result << "\n";
-   cout << addFunction->hasNUses(0);
    return 0;
 }
